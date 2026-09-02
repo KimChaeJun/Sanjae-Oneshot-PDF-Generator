@@ -1,0 +1,17 @@
+name: sanjae-oneshot-demo-generator
+
+services:
+  generator:
+    build: .
+    environment:
+      SANJAE_APP_URL: ${SANJAE_APP_URL:-https://sanjae-oneshot.co.kr}
+      SANJAE_API_URL: ${SANJAE_API_URL:-https://sanjae-oneshot.co.kr/api/v1}
+      SANJAE_ACCOUNT_SIGNUP_PATH: ${SANJAE_ACCOUNT_SIGNUP_PATH:-/auth/signup}
+      SANJAE_TEMPLATE_DIR: /app/templates
+    ports:
+      - "127.0.0.1:${GENERATOR_PORT:-8787}:8787"
+    volumes:
+      - ../참고 서류:/app/templates:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
