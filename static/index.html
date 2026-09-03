@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko"><head>
 <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#315fd1" />
-<title>산재원샷 서비스 체험</title><link rel="icon" type="image/png" href="./sanjae-logo.png" /><link rel="stylesheet" href="./styles.css?v=20260903-mobile" /><link rel="stylesheet" href="./demo.css?v=20260903-mobile" />
+<title>산재원샷 서비스 체험</title><link rel="icon" type="image/png" href="./sanjae-logo.png" /><link rel="stylesheet" href="./styles.css?v=20260903-mobile" /><link rel="stylesheet" href="./demo.css?v=20260903-synthetic-check" />
 </head><body><main class="shell">
 <header class="hero"><img class="brand-mark" src="./sanjae-logo.png" alt="산재원샷 로고" width="72" height="72" /><div><p class="eyebrow">SANJAE ONESHOT DEMO</p><h1>시연 준비를<br /><em>한 번에.</em></h1><p>예시 정보를 준비하고 실제 서비스의 신청 과정을 체험하세요.</p></div></header>
 <section class="workspace">
@@ -18,7 +18,10 @@
 <label>연락처<input name="phone" required maxlength="30" placeholder="010-0000-0000" /></label><label class="wide">주소<input name="address" required maxlength="300" placeholder="예: 경기도 안산시 시연로 100 (가상)" /></label>
 </div><aside class="persona-buttons"><button type="button" class="persona-button" data-persona="domestic">내국인 예시 생성</button><button type="button" class="persona-button" data-persona="foreign">외국인 예시 생성</button><p>이름 기반 합성 서명과 등록번호가 자동 생성됩니다.</p></aside></div>
 <p id="registration-preview" class="applicant-summary" aria-live="polite">시연용 주민번호 뒷자리는 랜덤하게 생성됩니다.</p><p>등록번호 첫 숫자만 출생 연도·성별·내외국인 규칙을 적용합니다. 전체 합성 번호는 JSON에 보관되며 실제 발급 번호나 본인 인증용이 아닙니다.</p>
-<label class="synthetic-check"><input id="synthetic-only" type="checkbox" /> 실제 개인정보가 아닌 합성 시연 정보만 입력했습니다.</label><div class="actions"><button class="primary" type="button" id="next" disabled>사고 유형 선택 →</button></div></section>
+<div class="actions confirmation-actions">
+  <label class="synthetic-check" for="synthetic-only"><input id="synthetic-only" type="checkbox" /><span>실제 개인정보가 아닌 <strong>합성 시연 정보</strong>만 입력했습니다.</span></label>
+  <button class="primary" type="button" id="next" disabled>사고 유형 선택 →</button>
+</div></section>
 <section data-step="2" hidden><h3 class="step-title" tabindex="-1">02 · 사고 유형 선택</h3><div id="case-types" class="case-types"></div><dl id="case-preview" class="case-preview"></dl>
 <div class="actions"><button type="button" class="secondary" id="back">이전</button><button type="button" class="secondary" id="randomize" disabled>다른 케이스</button><button type="submit" class="primary" id="generate" disabled>서류 준비하기 →</button></div><p>ZIP은 생성하지 않습니다. 증빙 PDF·서명 PNG·입력 가이드를 운영 DB에 암호화해 임시 보관합니다. 최종 신청서·재해경위서는 산재원샷에서 생성합니다.</p></section>
 <section data-step="3" hidden><h3 class="step-title" tabindex="-1">시연 준비 완료</h3><p>시연 계정 로그인부터 보완 답변까지 자동 입력합니다. 입력된 내용은 수정할 수 있으며 최종 확정은 직접 진행합니다.</p><p id="ready-summary" class="applicant-summary"></p>
