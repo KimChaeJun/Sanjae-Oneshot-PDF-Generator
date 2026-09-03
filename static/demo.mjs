@@ -61,6 +61,7 @@ form.onsubmit=async event=>{
     const accident=guide.steps.find(item=>item.id==='accident').fields;
     pairs($('#person-result'),[['성명',persona.name],['생년월일',persona.birth_date],['국적',persona.nationality],['연락처',persona.phone],['주소',persona.address],['등록번호',maskDemoRegistration(persona.registration_number)],['화면 언어',persona.preferred_language],['신청인',basic.applicant.name]]);
     pairs($('#case-result'),[...Object.entries(basic.workplace).map(([key,value])=>[({company_name:'사업장',management_number:'사업장 관리번호',business_registration_no:'사업자등록번호',representative_name:'사업주명',phone:'사업장 연락처',address:'사업장 주소',occupation:'담당 업무',job_position:'직책'})[key]||key,value]),['사고 유형',guide.case.type_label],['사고 일시',accident.accident_date+' '+accident.accident_time],['사고 장소',accident.accident_place],['목격자',accident.witness_name],['목격자 연락처',accident.witness_phone],['사고 경위',accident.raw_description]]);
+    $('#ready-summary').textContent=basic.applicant.name+' · '+guide.case.type_label;
     $('#signature').src=guide.signature.image;$('#files-result').textContent='임시 보관 완료: '+[...result.files,'시연_입력_가이드.json','서명 PNG'].join(' · ');
     const target=new URL(result.handoff_url);if(target.origin!=='https://sanjae-oneshot.co.kr')throw new Error('체험 주소를 확인할 수 없습니다.');$('#experience').href=target.href;step(3);
   }catch(error){status(error.message,true);}finally{busy=false;buttons();}

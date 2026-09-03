@@ -87,6 +87,13 @@ def guide_steps(applicant: Applicant, case: AccidentCase, documents: list[str]) 
         {"id": "requirements", "step": 4, "display_step": 5, "title": "필요 서류 확인", "instructions": ["유형별 분석 결과와 누락 항목을 확인합니다."]},
         {"id": "ocr", "step": 5, "display_step": 6, "title": "OCR 확인", "expected": {"worker_name": applicant.name, "diagnosis": case.diagnosis, "hospital": case.hospital}, "instructions": ["이름·날짜·사업장과 추출 결과를 대조합니다."]},
         {"id": "draft", "step": 6, "display_step": 7, "title": "AI 초안", "instructions": ["입력한 사실을 바탕으로 산재원샷이 재해경위서 초안을 생성했는지 확인합니다."]},
-        {"id": "review", "step": 7, "display_step": 8, "title": "AI 검토·보완", "reference_facts": demo_accident(case, applicant.preferred_language), "instructions": ["필수 보완 질문에 답하고 답변 반영을 누릅니다. 확인되지 않은 사실은 만들지 않습니다."]},
+        {"id": "review", "step": 7, "display_step": 8, "title": "AI 검토·보완",
+         "reference_facts": demo_accident(case, applicant.preferred_language),
+         "fields": {"answers": {
+             "post_accident_action": "사고 직후 응급조치, 관리자 보고 및 작업 중단 여부는 시연 자료에서 확인되지 않았습니다.",
+             "medical_treatment": f"시연 진단소견서상 진단은 {case.diagnosis}입니다. 구체적인 진료 경과와 추가 치료 내용은 확인되지 않았습니다.",
+             "work_disruption": "현재 결근 기간과 업무 제한 여부는 시연 자료에서 확인되지 않았습니다.",
+         }},
+         "instructions": ["시연 가이드의 보완 답변을 자동 입력합니다. 확인되지 않은 사실은 만들지 않습니다.", "수정한 답변은 덮어쓰지 않습니다. 답변 반영과 최종 확인은 시연자가 진행합니다."]},
         {"id": "final", "step": 8, "display_step": 9, "title": "최종 확인", "instructions": ["문안을 확인한 후 사실 확인·최종 제출 책임에 직접 체크합니다.", "산재원샷에서 신청정보와 재해경위서 PDF 2종을 최종 생성합니다. 합성 시연 자료는 실제 제출하지 않습니다."]},
     ]

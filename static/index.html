@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ko"><head>
 <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="referrer" content="no-referrer" /><meta name="theme-color" content="#315fd1" />
-<title>산재원샷 서비스 체험</title><link rel="icon" type="image/png" href="./sanjae-logo.png" /><link rel="stylesheet" href="./styles.css?v=20260903" /><link rel="stylesheet" href="./demo.css?v=20260903" />
+<title>산재원샷 서비스 체험</title><link rel="icon" type="image/png" href="./sanjae-logo.png" /><link rel="stylesheet" href="./styles.css?v=20260903-mobile" /><link rel="stylesheet" href="./demo.css?v=20260903-mobile" />
 </head><body><main class="shell">
 <header class="hero"><img class="brand-mark" src="./sanjae-logo.png" alt="산재원샷 로고" width="72" height="72" /><div><p class="eyebrow">SANJAE ONESHOT DEMO</p><h1>시연 준비를<br /><em>한 번에.</em></h1><p>예시 정보를 준비하고 실제 서비스의 신청 과정을 체험하세요.</p></div></header>
 <section class="workspace">
@@ -9,7 +9,7 @@
 <p class="applicant-summary">연결 대상: https://sanjae-oneshot.co.kr</p>
 <ol class="stepper" aria-label="시연 준비 단계"><li data-indicator="1" aria-current="step"><span class="step-number">1</span>정보 준비</li><li data-indicator="2"><span class="step-number">2</span>사고 유형 선택</li><li data-indicator="3"><span class="step-number">3</span>체험 시작</li></ol>
 <form id="demo-form">
-<section data-step="1"><h3 class="step-title" tabindex="-1">01 · 시연 정보 준비</h3><p>가상의 정보를 직접 입력하거나 오른쪽의 예시 생성 버튼을 사용하세요.</p>
+<section data-step="1"><h3 class="step-title" tabindex="-1">01 · 시연 정보 준비</h3><p>가상의 정보를 직접 입력하거나 예시 생성 버튼을 사용하세요.</p>
 <div class="demo-input-layout"><div id="person-fields" class="demo-fields">
 <label>이름<input name="name" required maxlength="100" placeholder="예: 김시연" /></label><label>국적<input name="nationality" required maxlength="80" placeholder="예: 대한민국, 베트남" /></label>
 <fieldset class="birth-fields"><legend>생년월일</legend><label>년<input name="year" inputmode="numeric" maxlength="4" placeholder="1994" required /></label><label>월<input name="month" inputmode="numeric" maxlength="2" placeholder="03" required /></label><label>일<input name="day" inputmode="numeric" maxlength="2" placeholder="12" required /></label></fieldset>
@@ -21,10 +21,10 @@
 <label class="synthetic-check"><input id="synthetic-only" type="checkbox" /> 실제 개인정보가 아닌 합성 시연 정보만 입력했습니다.</label><div class="actions"><button class="primary" type="button" id="next" disabled>사고 유형 선택 →</button></div></section>
 <section data-step="2" hidden><h3 class="step-title" tabindex="-1">02 · 사고 유형 선택</h3><div id="case-types" class="case-types"></div><dl id="case-preview" class="case-preview"></dl>
 <div class="actions"><button type="button" class="secondary" id="back">이전</button><button type="button" class="secondary" id="randomize" disabled>다른 케이스</button><button type="submit" class="primary" id="generate" disabled>서류 준비하기 →</button></div><p>ZIP은 생성하지 않습니다. 증빙 PDF·서명 PNG·입력 가이드를 운영 DB에 암호화해 임시 보관합니다. 최종 신청서·재해경위서는 산재원샷에서 생성합니다.</p></section>
-<section data-step="3" hidden><h3 class="step-title" tabindex="-1">시연 준비 완료</h3><p>체험하기를 누르면 시연 계정으로 로그인하여 단계별로 자동 입력합니다. AI 보완·최종 확인에서는 직접 수정하고 진행하세요.</p>
-<div class="result-grid"><section><h4>시연 정보</h4><dl id="person-result" class="completion-details"></dl></section><section><h4>사업장·사고 정보</h4><dl id="case-result" class="completion-details"></dl></section></div>
-<section class="signature-result"><h4>이름 기반 합성 서명</h4><img id="signature" alt="합성 시연 서명" width="480" height="140" /></section><p id="files-result" class="applicant-summary"></p>
+<section data-step="3" hidden><h3 class="step-title" tabindex="-1">시연 준비 완료</h3><p>시연 계정 로그인부터 보완 답변까지 자동 입력합니다. 입력된 내용은 수정할 수 있으며 최종 확정은 직접 진행합니다.</p><p id="ready-summary" class="applicant-summary"></p>
+<div class="result-grid"><details class="result-details"><summary>시연 정보</summary><dl id="person-result" class="completion-details"></dl></details><details class="result-details"><summary>사업장·사고 정보</summary><dl id="case-result" class="completion-details"></dl></details></div>
+<details class="result-details"><summary>이름 기반 합성 서명</summary><img id="signature" alt="합성 시연 서명" width="480" height="140" /></details><p id="files-result" class="applicant-summary"></p>
 <p>체험 링크는 30분 이내에 한 번 사용할 수 있습니다. 임시 자료는 최종 문서 생성 성공 후 제거하며, 미완료 자료도 최대 24시간 후 정리합니다. 신청에 저장한 정보·증빙 및 최종 문서는 서비스의 보관 정책을 따릅니다.</p>
 <div class="actions"><button type="button" class="secondary" id="restart">새 시연 만들기</button><a id="experience" class="primary" referrerpolicy="no-referrer">체험하기 ↗</a></div></section>
 <p id="status" class="status" role="status" aria-live="polite"></p></form></section><footer>산재원샷 · 합성 자료 체험 전용 · 실제 기관 제출 금지</footer>
-</main><script src="./demo.mjs?v=20260903" type="module"></script></body></html>
+</main><script src="./demo.mjs?v=20260903-mobile" type="module"></script></body></html>

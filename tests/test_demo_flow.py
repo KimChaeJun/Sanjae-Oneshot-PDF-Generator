@@ -50,6 +50,11 @@ def test_json_response_matches_zip_and_steps(case_type, monkeypatch):
         assert manifest["documents"] == [name for name in archive.namelist() if name.endswith(".pdf")]
     assert manifest["workplace"]["management_number"] != manifest["workplace"]["business_registration_no"]
     steps = {step["id"]: step for step in manifest["steps"]}
+    answers = steps["review"]["fields"]["answers"]
+    assert steps["ocr"]["expected"]["diagnosis"] in answers["medical_treatment"]
+    assert "확인되지 않았" in answers["post_accident_action"]
+    assert "확인되지 않았" in answers["work_disruption"]
+    assert "facts_confirmed" not in steps["final"].get("fields", {})
     assert steps["basic"]["fields"]["workplace"] == manifest["workplace"]
     assert steps["accident"]["fields"] == manifest["accident"]
     assert steps["profile"]["fields"]["foreign_registration_no"] is None
