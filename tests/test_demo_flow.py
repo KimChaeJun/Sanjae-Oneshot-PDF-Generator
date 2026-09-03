@@ -52,8 +52,10 @@ def test_json_response_matches_zip_and_steps(case_type, monkeypatch):
     steps = {step["id"]: step for step in manifest["steps"]}
     answers = steps["review"]["fields"]["answers"]
     assert steps["ocr"]["expected"]["diagnosis"] in answers["medical_treatment"]
-    assert "확인되지 않았" in answers["post_accident_action"]
-    assert "확인되지 않았" in answers["work_disruption"]
+    assert steps["ocr"]["expected"]["hospital"] in answers["medical_treatment"]
+    for answer in answers.values():
+        assert answer in steps["accident"]["fields"]["raw_description"]
+        assert "확인되지 않았" not in answer
     assert "facts_confirmed" not in steps["final"].get("fields", {})
     assert steps["basic"]["fields"]["workplace"] == manifest["workplace"]
     assert steps["accident"]["fields"] == manifest["accident"]

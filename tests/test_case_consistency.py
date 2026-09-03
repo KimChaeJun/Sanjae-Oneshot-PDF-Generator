@@ -1,4 +1,8 @@
 import pytest
+from io import BytesIO
+from pypdf import PdfReader
+from app.demo_guide import demo_accident, demo_followup
+from app.pdf_generator import Applicant, build_document_pdf
 
 from app.cases import CASE_TYPES, case_catalog, get_case
 
@@ -31,6 +35,25 @@ def test_reported_hand_trapping_case_has_hand_diagnosis():
     assert case.diagnosis == "우측 손 압궤상"
     assert case.injury_part == "우측 손"
     assert "발목" not in case.diagnosis
+
+
+@pytest.mark.parametrize("case_type", CASE_TYPES)
+def test_followup_facts_are_shared_by_scenario_and_input_evidence(case_type):
+    case = get_case(case_type, seed=3)
+    applicant = Applicant(name="SYNTHETIC DEMO", birth_date="1994-03-12",
+        registration_number="940312-5123456", address="가상의 시연 주소",
+        phone="010-0000-0000", email="demo@example.invalid", nationality="베트남",
+        preferred_language="en")
+    kind = "death" if case_type == "survivor" else "medical"
+    pdf = PdfReader(BytesIO(build_document_pdf("합성 시연 증빙", kind, applicant, case)))
+    content = "".join("".join(page.extract_text().split()) for page in pdf.pages)
+    for answer in demo_followup(case).values():
+        assert answer in demo_accident(case, "en")["raw_description"]
+        assert "".join(answer.split()) in content
+    assert len(pdf.pages) == 1
+    if case_type == "survivor":
+        assert "사망" in demo_followup(case)["medical_treatment"]
+        assert "치료는 종결되지" not in demo_followup(case)["medical_treatment"]
 
 
 def test_noise_exposure_is_not_combined_with_musculoskeletal_diagnosis():

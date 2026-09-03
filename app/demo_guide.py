@@ -26,6 +26,29 @@ def demo_workplace(case: AccidentCase) -> dict[str, str]:
     }
 
 
+def demo_followup(case: AccidentCase) -> dict[str, str]:
+    """Explicit fictional follow-up facts, shared by the input guide and PDFs."""
+    response = (
+        "사고 직후 이동을 멈추고 회사 담당자에게 연락했습니다."
+        if case.case_type == "commute"
+        else "증상 확인 후 담당자에게 알리고 무리한 동작을 중단했습니다."
+        if case.case_type in {"occupational_disease", "retreatment"}
+        else "사고 직후 작업을 중단하고 관리자에게 보고했습니다."
+    )
+    visit = f"{case.accident_date}에 {case.hospital}에서 진료를 받았습니다. 이동 방법은 '{case.transport}'입니다."
+    treatment = (
+        f"진단은 {case.diagnosis}이며 응급진료 후 사고 당일 사망한 합성 사례입니다."
+        if case.case_type == "survivor"
+        else f"진단은 {case.diagnosis}입니다. 시연 현재 추가 진료와 안정 치료를 받고 있으며 치료는 종결되지 않았습니다."
+    )
+    work = (
+        "사고 후 사망하여 근무에 복귀하지 못했습니다."
+        if case.case_type == "survivor"
+        else "시연 현재 해당 업무를 중단하고 요양 중이며 정상 업무에 복귀하지 않았습니다."
+    )
+    return {"post_accident_action": response, "medical_treatment": f"{visit} {treatment}", "work_disruption": work}
+
+
 def demo_accident(case: AccidentCase, language: str) -> dict[str, object]:
     witness_present = case.witness != "목격자 없음"
     number = int(case.id.rsplit("-", 1)[1])
@@ -37,7 +60,7 @@ def demo_accident(case: AccidentCase, language: str) -> dict[str, object]:
         "accident_time_precision": "exact",
         "accident_place": case.accident_place,
         "task_description": case.task,
-        "raw_description": case.accident_description,
+        "raw_description": case.accident_description + " 합성 시연의 후속 상황: " + " ".join(demo_followup(case).values()),
         "language": language,
         "injury_parts": [case.injury_part],
         "witness_status": "yes" if witness_present else "no",
@@ -89,11 +112,7 @@ def guide_steps(applicant: Applicant, case: AccidentCase, documents: list[str]) 
         {"id": "draft", "step": 6, "display_step": 7, "title": "AI 초안", "instructions": ["입력한 사실을 바탕으로 산재원샷이 재해경위서 초안을 생성했는지 확인합니다."]},
         {"id": "review", "step": 7, "display_step": 8, "title": "AI 검토·보완",
          "reference_facts": demo_accident(case, applicant.preferred_language),
-         "fields": {"answers": {
-             "post_accident_action": "사고 직후 응급조치, 관리자 보고 및 작업 중단 여부는 시연 자료에서 확인되지 않았습니다.",
-             "medical_treatment": f"시연 진단소견서상 진단은 {case.diagnosis}입니다. 구체적인 진료 경과와 추가 치료 내용은 확인되지 않았습니다.",
-             "work_disruption": "현재 결근 기간과 업무 제한 여부는 시연 자료에서 확인되지 않았습니다.",
-         }},
+         "fields": {"answers": demo_followup(case)},
          "instructions": ["시연 가이드의 보완 답변을 자동 입력합니다. 확인되지 않은 사실은 만들지 않습니다.", "수정한 답변은 덮어쓰지 않습니다. 답변 반영과 최종 확인은 시연자가 진행합니다."]},
         {"id": "final", "step": 8, "display_step": 9, "title": "최종 확인", "instructions": ["문안을 확인한 후 사실 확인·최종 제출 책임에 직접 체크합니다.", "산재원샷에서 신청정보와 재해경위서 PDF 2종을 최종 생성합니다. 합성 시연 자료는 실제 제출하지 않습니다."]},
     ]

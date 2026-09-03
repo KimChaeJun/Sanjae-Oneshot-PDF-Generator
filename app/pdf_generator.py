@@ -25,7 +25,7 @@ from reportlab.platypus import (
 
 from app.account_client import AccountCreationResult
 from app.cases import AccidentCase
-from app.demo_guide import GUIDE_FILENAME, SIGNATURE_FILENAME, demo_workplace, demo_accident, guide_steps
+from app.demo_guide import GUIDE_FILENAME, SIGNATURE_FILENAME, demo_workplace, demo_accident, demo_followup, guide_steps
 from app.signature import decode_signature
 from app.registration import mask_registration_number, normalize_registration_number, validate_registration_persona
 
@@ -161,13 +161,14 @@ def _field_table(rows: list[tuple[str, object]], styles: dict[str, ParagraphStyl
         ("GRID", (0, 0), (-1, -1), 0.45, LINE),
         ("LEFTPADDING", (0, 0), (-1, -1), 7),
         ("RIGHTPADDING", (0, 0), (-1, -1), 7),
-        ("TOPPADDING", (0, 0), (-1, -1), 7),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+        ("TOPPADDING", (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
     ]))
     return table
 
 
 def _document_rows(kind: str, applicant: Applicant, case: AccidentCase) -> list[tuple[str, object]]:
+    followup = demo_followup(case)
     common = [
         ("재해 근로자", applicant.name),
         ("생년월일", applicant.birth_date),
@@ -181,6 +182,9 @@ def _document_rows(kind: str, applicant: Applicant, case: AccidentCase) -> list[
             ("진단명", case.diagnosis),
             ("상병 부위", case.injury_part),
             ("진료일", case.accident_date),
+            ("시연 후속 조치", followup["post_accident_action"]),
+            ("시연 진료 경과", followup["medical_treatment"]),
+            ("시연 업무 상태", followup["work_disruption"]),
             ("의사 소견", "사고 또는 업무력과 상병의 관련성을 확인하기 위한 추가 진료와 안정이 필요함."),
         ]
     if kind == "employment":
@@ -194,6 +198,8 @@ def _document_rows(kind: str, applicant: Applicant, case: AccidentCase) -> list[
             ("담당 업무", case.occupation),
             ("사고 당시 작업", case.task),
             ("근무 확인", "사고일 현재 위 사업장에서 근무한 사실을 확인함."),
+            ("시연 후속 조치", followup["post_accident_action"]),
+            ("시연 업무 상태", followup["work_disruption"]),
         ]
     if kind == "work_record":
         return common + [
@@ -201,6 +207,7 @@ def _document_rows(kind: str, applicant: Applicant, case: AccidentCase) -> list[
             ("작업 일시", f"{case.accident_date} {case.accident_time}"),
             ("작업 장소", case.accident_place),
             ("배정 작업", case.task),
+            ("시연 후속 조치", followup["post_accident_action"]),
             ("자료 성격", "작업 배정 사실을 확인하는 합성 기록. 재해경위서 완성본이 아닙니다."),
         ]
     if kind == "death":
@@ -209,6 +216,9 @@ def _document_rows(kind: str, applicant: Applicant, case: AccidentCase) -> list[
             ("확인일", case.accident_date),
             ("상병", case.diagnosis),
             ("확인 사실", "업무상 사고 후 사망한 가상 근로자의 시연용 기록"),
+            ("시연 후속 조치", followup["post_accident_action"]),
+            ("시연 진료 경과", followup["medical_treatment"]),
+            ("시연 업무 상태", followup["work_disruption"]),
             ("자료 성격", "실제 사망진단서가 아닌 합성 증빙 자료"),
         ]
     if kind == "witness":
@@ -254,10 +264,10 @@ def build_document_pdf(title: str, kind: str, applicant: Applicant, case: Accide
         _paragraph(title, styles["title"]),
         _paragraph("입력용 합성 증빙 · 실제 기관 발급 문서가 아닙니다", styles["subtitle"]),
         _field_table(_document_rows(kind, applicant, case), styles),
-        Spacer(1, 8 * mm),
+        Spacer(1, 4 * mm),
         _paragraph("확인 사항", styles["heading"]),
         _paragraph("이 문서는 산재원샷의 문서 업로드·OCR·사실 대조 흐름을 시연하기 위해 만든 합성 자료입니다. 실제 신청이나 신원 확인에 사용할 수 없습니다.", styles["body"]),
-        Spacer(1, 12 * mm),
+        Spacer(1, 6 * mm),
         _field_table([("작성일", datetime.now().date().isoformat()), ("작성자", "산재원샷 데모 문서 생성기"), ("확인", "시연 담당자 확인")], styles),
     ]
     doc.build(story, onFirstPage=_footer, onLaterPages=_footer)
